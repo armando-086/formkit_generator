@@ -209,15 +209,15 @@ class FormKitMapperGenerator extends Generator {
     // 4. .formkit_access_ref
     // --------------------------------------------------------------
 
-    final refId = buildStep.inputId
-        .changeExtension('.formkit_register_ref'); 
+    // final refId = buildStep.inputId
+    //     .changeExtension('.formkit_register_ref'); 
 
-    final ref = StringBuffer();
-    ref.writeln('FormKitAccess:$generatedAccessName');
-    ref.writeln('Entity:$outputClassName');
-    ref.writeln('Path:${relativePath}');
+    // final ref = StringBuffer();
+    // ref.writeln('FormKitAccess:$generatedAccessName');
+    // ref.writeln('Entity:$outputClassName');
+    // ref.writeln('Path:${relativePath}');
 
-    await buildStep.writeAsString(refId, ref.toString());
+    // await buildStep.writeAsString(refId, ref.toString());
 
     return buffer.toString();
   }

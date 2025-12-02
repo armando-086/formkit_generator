@@ -1,19 +1,19 @@
 targets:
   $default:
     builders:
-      formkit_generator|formkit_mapper_builder:
+      formkit_generator|formkit_mapper_builder: # Revertido a formkit_mapper_builder
         enabled: true
       formkit_generator|formkit_auto_register_collector:
-        enabled: true
+        enabled: false # Deshabilitado
       formkit_generator|formkit_auto_register_finalizer:
-        enabled: true
+        enabled: false # Deshabilitado
 
 builders:
-  formkit_mapper_builder:
+  formkit_mapper_builder: # Revertido a formkit_mapper_builder
     import: "package:formkit_generator/src/mapping/formkit_mapper_builder.dart"
-    builder_factories: ["formkitMapperBuilder"]
+    builder_factories: ["formkitMapperBuilder"] # Usamos la función original
     build_extensions:
-      .dart: [".formkit_mapper.dart", ".formkit_register_ref"] # REEMPLAZO
+      .dart: [".formkit_mapper.dart"] # ELIMINADO: .formkit_register_ref
     auto_apply: dependents
     build_to: source
     applies_builders: ["source_gen|combining_builder"]
