@@ -1,0 +1,34 @@
+targets:
+  $default:
+    builders:
+      formkit_generator|formkit_mapper_builder:
+        enabled: true
+      formkit_generator|formkit_auto_register_collector:
+        enabled: true
+      formkit_generator|formkit_auto_register_finalizer:
+        enabled: true
+
+builders:
+  formkit_mapper_builder:
+    import: "package:formkit_generator/src/mapping/formkit_mapper_builder.dart"
+    builder_factories: ["formkitMapperBuilder"]
+    build_extensions:
+      .dart: [".formkit_mapper.dart", ".formkit_register_ref"] # REEMPLAZO
+    auto_apply: dependents
+    build_to: source
+    applies_builders: ["source_gen|combining_builder"]
+
+  formkit_auto_register_finalizer:
+    import: "package:formkit_generator/src/build/formkit_auto_register_finalizer_builder.dart"
+    builder_factories: ["formkitAutoRegisterFinalizerBuilder"]
+    build_extensions:
+      r'$lib$': ["lib/formkit_auto_register.dart"]
+    auto_apply: dependents
+    build_to: source
+    required_inputs: [".formkit_register_ref"] # REEMPLAZO
+
+post_process_builders:
+  formkit_auto_register_collector:
+    import: "package:formkit_generator/src/build/formkit_auto_register_builder.dart"
+    builder_factory: "formkitAutoRegisterBuilder"
+    input_extensions: [".formkit_register_ref"] # REEMPLAZO
