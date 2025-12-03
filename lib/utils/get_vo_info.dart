@@ -8,6 +8,7 @@ import 'package:formkit_generator/utils/field_info.dart';
 FieldInfo getVoInfo(FieldElement field) {
   final FieldElement f = field;
 
+  // Obtiene el tipo del campo con su nulabilidad. Este es el VO Type.
   final String voType = f.type.getDisplayString(withNullability: true);
 
   // 1. Verificar si el campo implementa o extiende ValueObject
@@ -24,6 +25,7 @@ FieldInfo getVoInfo(FieldElement field) {
       if (voSuperType.typeArguments.isNotEmpty) {
         final primitiveType = voSuperType.typeArguments.first
             .getDisplayString(withNullability: true);
+
         return FieldInfo.vo(primitiveType, voType);
       }
     }

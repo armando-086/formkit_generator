@@ -11,8 +11,8 @@ class FormKitAutoRegisterFinalizer extends Builder {
   // Definimos la única salida que este builder producirá, dentro del paquete 'formkit'
   @override
   Map<String, List<String>> get buildExtensions => {
-    r'$lib$': [FormKitAutoRegisterCollector.outputFilePath],
-  };
+        r'$lib$': [FormKitAutoRegisterCollector.outputFilePath],
+      };
 
   @override
   Future<void> build(BuildStep buildStep) async {
@@ -28,16 +28,18 @@ class FormKitAutoRegisterFinalizer extends Builder {
       if (await buildStep.canRead(assetId)) {
         try {
           final content = await buildStep.readAsString(assetId);
-          
-          final classNameMatch = RegExp(r'FormKitAccess:(\w+)').firstMatch(content);
+
+          final classNameMatch =
+              RegExp(r'FormKitAccess:(\w+)').firstMatch(content);
           final entityNameMatch = RegExp(r'Entity:(\w+)').firstMatch(content);
           final pathMatch = RegExp(r'Path:(.+)').firstMatch(content);
-          
-          if (classNameMatch != null && entityNameMatch != null && pathMatch != null) {
-            final className = classNameMatch.group(1)!;
-            final entityName = entityNameMatch.group(1)!;
-            String importPath = pathMatch.group(1)!;
-            
+
+          // Uso de ?.group(1) para manejar nulos de forma segura
+          final className = classNameMatch?.group(1);
+          final entityName = entityNameMatch?.group(1);
+          String? importPath = pathMatch?.group(1);
+
+          if (className != null && entityName != null && importPath != null) {
             // Usamos el nombre real del paquete del AssetId de referencia.
             final packageName = assetId.package;
 
@@ -49,9 +51,13 @@ class FormKitAutoRegisterFinalizer extends Builder {
               'entityName': entityName,
               'importPath': importPath,
             });
+          } else {
+            log.warning(
+                'Invalid content format in access reference from ${assetId.path}');
           }
         } catch (e) {
-          log.severe('Error reading access reference from ${assetId.path}: $e');
+          log.warning(
+              'Error reading access reference from ${assetId.path}: $e');
         }
       }
     }
@@ -64,12 +70,19 @@ class FormKitAutoRegisterFinalizer extends Builder {
     final StringBuffer buffer = StringBuffer();
 
     buffer.writeln('// GENERATED CODE - DO NOT MODIFY BY HAND');
-    buffer.writeln('// ignore_for_file: depend_on_referenced_packages, unnecessary_import');
+    buffer.writeln(
+        '// ignore_for_file: depend_on_referenced_packages, unnecessary_import');
     buffer.writeln('');
-    
+
     // Importaciones necesarias
-    buffer.writeln("import 'package:formkit/src/flutter/core/contracts/iformkit_access.dart';");
-    buffer.writeln("import 'package:formkit/src/flutter/core/contracts/icontroller_factory.dart';");
+    buffer.writeln(
+        "import 'package:formkit/src/flutter/core/contracts/iformkit_access.dart';");
+    buffer.writeln(
+        "import 'package:formkit/src/flutter/core/contracts/icontroller_factory.dart';");
+    buffer.writeln(
+        "import 'package:formkit/src/mapping/contracts/iform_mapper.dart';");
+    buffer.writeln(
+        "import 'package:formkit/src/flutter/core/field_controller.dart';");
 
     final imports = accessClasses.map((c) => c['importPath']).toSet();
     for (final importPath in imports) {
@@ -77,39 +90,49 @@ class FormKitAutoRegisterFinalizer extends Builder {
     }
 
     buffer.writeln('');
-    
+
     // Definición de la función de registro genérica (DI Agnosticismo)
-    buffer.writeln('typedef FormKitAccessRegister<TDI> = void Function<TEntity>({');
+    buffer.writeln(
+        'typedef FormKitAccessRegister<TDI> = void Function<TEntity>({');
     buffer.writeln(' required TDI di,');
-    buffer.writeln(' required IFormKitAccess<TEntity> Function(IControllerFactory) factory,');
+    buffer.writeln(
+        ' required IFormKitAccess<TEntity> Function(IControllerFactory) factory,');
+    buffer.writeln(' required IFormMapper<TEntity> mapper,');
     buffer.writeln('});');
     buffer.writeln('');
 
-    buffer.writeln('/// Clase generada que contiene la lógica de registro para todas las clases [IFormKitAccess].');
+    buffer.writeln(
+        '/// Clase generada que contiene la lógica de registro para todas las clases [IFormKitAccess].');
     buffer.writeln('class FormKitAutoRegister {');
-    buffer.writeln('  FormKitAutoRegister._();');
+    buffer.writeln(' FormKitAutoRegister._();');
     buffer.writeln('');
 
-    buffer.writeln('  static void registerAll<TDI>({');
-    buffer.writeln('    required TDI di,');
-    buffer.writeln('    required FormKitAccessRegister<TDI> registerFn,');
-    buffer.writeln('  }) {');
-    
+    buffer.writeln(' static void registerAll<TDI>({');
+    buffer.writeln('  required TDI di,');
+    buffer.writeln('  required IControllerFactory controllerFactory,');
+    buffer.writeln('  required FormKitAccessRegister<TDI> registerFn,');
+    buffer.writeln(' }) {');
+
     // 4. Generar la llamada a `registerFn` para cada clase de acceso
     for (final access in accessClasses) {
       final className = access['className']!;
       final entityName = access['entityName']!;
-      
-      // Creamos la factoría específica para cada clase generada
-      buffer.writeln('    registerFn<$entityName>(di: di, factory: (factory) => $className(factory));');
+      final mapperName = '_${entityName}Mapper';
+
+      // Se utiliza la sintaxis correcta para la llamada y se pasa el mapper.
+      buffer.writeln('  registerFn<$entityName>(');
+      buffer.writeln('   di: di,');
+      buffer.writeln('   factory: (_) => $className(controllerFactory),');
+      buffer.writeln('   mapper: const $mapperName(),');
+      buffer.writeln('  );');
     }
 
-    buffer.writeln('  }');
+    buffer.writeln(' }');
     buffer.writeln('}');
 
     // 5. Escribir el archivo final en el paquete `formkit`
     final outputId = AssetId(
-      'formkit', 
+      'formkit',
       FormKitAutoRegisterCollector.outputFilePath,
     );
 
