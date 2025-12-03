@@ -8,29 +8,30 @@ targets:
         enabled: true
       formkit_generator|formkit_auto_register_finalizer:
         enabled: true
-
+        
 builders:
   formkit_mapper_builder:
-    # Ruta corregida: Ahora apunta a formkit_generator/lib/builder_options/formkit_mapper_builder.dart
-    import: "package:formkit_generator/builder_options/formkit_mapper_builder.dart"
+    # IMPORTANTE: La ruta debe apuntar al archivo donde está la función formKitMapperBuilder()
+    import: "package:formkit_generator/builder_options/formkit_mapper_builder.dart" 
     builder_factories: ["formKitMapperBuilder"]
     build_extensions:
-      .dart: [".formkit_mapper.dart"]
+      .dart: [".formkit_mapper.dart"]  
     auto_apply: dependents
     build_to: source
-    applies_builders: ["source_gen|combining_builder"]
+    applies_builders: ["source_gen|combining_builder"]  
+
 
   formkit_access_ref_builder:
-    # Ruta corregida
-    import: "package:formkit_generator/builder_options/formkit_access_ref_builder_factory.dart"
+    # IMPORTANTE: La ruta debe apuntar al archivo donde está la función formKitAccessRefBuilder()
+    import: "package:formkit_generator/builder_options/formkit_access_ref_builder_factory.dart" 
     builder_factories: ["formKitAccessRefBuilder"]
     build_extensions:
-      .dart: [".formkit_access_ref"]
+      .dart: [".formkit_access_ref"]  
     auto_apply: dependents
     build_to: source
 
   formkit_auto_register_finalizer:
-    # Ruta corregida
+    # IMPORTANTE: La ruta debe apuntar al archivo donde está la función formKitAutoRegisterFinalizerBuilder()
     import: "package:formkit_generator/builder_options/formkit_auto_register_finalizer_builder.dart"
     builder_factories: ["formKitAutoRegisterFinalizerBuilder"]
     build_extensions:
