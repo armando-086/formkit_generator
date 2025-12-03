@@ -9,13 +9,13 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  # Dependencia del paquete principal que contiene la anotación y los contratos
+
   formkit:
     git:
       url: https://github.com/armando-086/formkit.git
       ref: main  
 
-  # Dependencias del generador
+  # Dependencias del generadoR
   analyzer: ^8.4.1
   build: ^4.0.0
   source_gen: ^4.0.0
