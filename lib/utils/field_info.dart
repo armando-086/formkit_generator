@@ -1,4 +1,3 @@
-
 class FieldInfo {
   final bool isValueObject;
   final String primitiveType;
@@ -11,7 +10,3 @@ class FieldInfo {
 
   FieldInfo.vo(this.primitiveType, this.voType) : isValueObject = true;
 }
-
-
-
-

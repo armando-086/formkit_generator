@@ -1,34 +1,48 @@
 targets:
   $default:
     builders:
-      formkit_generator|formkit_mapper_builder: # Revertido a formkit_mapper_builder
+      # Referencia al paquete del generador
+      formkit_generator|formkit_mapper_builder:
         enabled: true
-      formkit_generator|formkit_auto_register_collector:
-        enabled: false # Deshabilitado
+      formkit_generator|formkit_access_ref_builder:
+        enabled: true
       formkit_generator|formkit_auto_register_finalizer:
-        enabled: false # Deshabilitado
-
+        enabled: true
+        
 builders:
-  formkit_mapper_builder: # Revertido a formkit_mapper_builder
-    import: "package:formkit_generator/src/mapping/formkit_mapper_builder.dart"
-    builder_factories: ["formkitMapperBuilder"] # Usamos la función original
+  formkit_mapper_builder:
+    # Ruta corregida: Ahora apunta a formkit_generator/lib/builder_options/formkit_mapper_builder.dart
+    import: "package:formkit_generator/builder_options/formkit_mapper_builder.dart"
+    builder_factories: ["formKitMapperBuilder"]
     build_extensions:
-      .dart: [".formkit_mapper.dart"] # ELIMINADO: .formkit_register_ref
+      .dart: [".formkit_mapper.dart"]  
     auto_apply: dependents
     build_to: source
-    applies_builders: ["source_gen|combining_builder"]
+    applies_builders: ["source_gen|combining_builder"]  
+
+
+  formkit_access_ref_builder:
+    # Ruta corregida
+    import: "package:formkit_generator/builder_options/formkit_access_ref_builder_factory.dart" 
+    builder_factories: ["formKitAccessRefBuilder"]
+    build_extensions:
+      .dart: [".formkit_access_ref"]  
+    auto_apply: dependents
+    build_to: source
 
   formkit_auto_register_finalizer:
-    import: "package:formkit_generator/src/build/formkit_auto_register_finalizer_builder.dart"
-    builder_factories: ["formkitAutoRegisterFinalizerBuilder"]
+    # Ruta corregida
+    import: "package:formkit_generator/builder_options/formkit_auto_register_finalizer_builder.dart"
+    builder_factories: ["formKitAutoRegisterFinalizerBuilder"]
     build_extensions:
       r'$lib$': ["lib/formkit_auto_register.dart"]
     auto_apply: dependents
     build_to: source
-    required_inputs: [".formkit_register_ref"] # REEMPLAZO
+    required_inputs: [".formkit_access_ref"]
 
 post_process_builders:
   formkit_auto_register_collector:
-    import: "package:formkit_generator/src/build/formkit_auto_register_builder.dart"
-    builder_factory: "formkitAutoRegisterBuilder"
-    input_extensions: [".formkit_register_ref"] # REEMPLAZO
+    # Ruta corregida
+    import: "package:formkit_generator/builder_options/formkit_auto_register_builder.dart"
+    builder_factory: "formKitAutoRegisterBuilder"
+    input_extensions: [".formkit_access_ref"]
