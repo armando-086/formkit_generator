@@ -10,8 +10,10 @@ environment:
 
 dependencies:
 
-  formkit:
-    path: ../formkit
+  formkit: 
+    git:
+      url: https://github.com/armando-086/formkit.git
+      ref: main
 
   # Dependencias del generadoR
   analyzer: ^8.4.1
