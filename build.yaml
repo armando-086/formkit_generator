@@ -1,7 +1,6 @@
 targets:
   $default:
     builders:
-      # Referencia al paquete del generador
       formkit_generator|formkit_mapper_builder:
         enabled: true
       formkit_generator|formkit_access_ref_builder:
@@ -11,19 +10,14 @@ targets:
         
 builders:
   formkit_mapper_builder:
-    # IMPORTANTE: La ruta debe apuntar al archivo donde está la función formKitMapperBuilder()
     import: "package:formkit_generator/builder_options/formkit_mapper_builder.dart"
     builder_factories: ["formKitMapperBuilder"]
     build_extensions:
       .dart: [".formkit_mapper.dart"]
     auto_apply: dependents
     build_to: source
-    # ELIMINADO: Esta línea causaba el conflicto con LibraryBuilder
-    # applies_builders: ["source_gen|combining_builder"] 
-
 
   formkit_access_ref_builder:
-    # IMPORTANTE: La ruta debe apuntar al archivo donde está la función formKitAccessRefBuilder()
     import: "package:formkit_generator/builder_options/formkit_access_ref_builder_factory.dart"
     builder_factories: ["formKitAccessRefBuilder"]
     build_extensions:
@@ -32,7 +26,6 @@ builders:
     build_to: source
 
   formkit_auto_register_finalizer:
-    # IMPORTANTE: La ruta debe apuntar al archivo donde está la función FormKitAutoRegisterFinalizerBuilder()
     import: "package:formkit_generator/builder_options/formkit_auto_register_finalizer_builder.dart"
     builder_factories: ["formKitAutoRegisterFinalizerBuilder"]
     build_extensions:
